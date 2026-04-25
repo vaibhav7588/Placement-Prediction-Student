@@ -8,7 +8,7 @@ with open("model.pkl", "rb") as f:
 
 st.title("🎓 Student Placement Prediction")
 
-# 🔹 FLOAT INPUTS (IMPORTANT)
+# 🔹 FLOAT INPUTS
 cgpa = st.number_input("CGPA", min_value=0.0, max_value=10.0, step=0.1)
 
 ssc = st.number_input("10th Percentage (SSC)", min_value=0.0, max_value=100.0, step=0.1)
@@ -29,23 +29,29 @@ training = st.selectbox("Placement Training", ["No", "Yes"])
 # Convert training
 training_val = 1 if training == "Yes" else 0
 
-# 🔹 Prediction
+# 🔹 Prediction Button
 if st.button("Predict"):
+
+    # 🚨 FAIL CONDITION (IMPORTANT)
+    if ssc < 35 or hsc < 35:
+        st.error("❌ Student will NOT be Placed (Failed in SSC/HSC)")
     
-    input_data = np.array([[
-        float(cgpa),
-        float(ssc),
-        float(hsc),
-        float(internships),
-        float(projects),
-        float(aptitude),
-        float(communication),
-        float(training_val)
-    ]])
-
-    result = model.predict(input_data)
-
-    if result[0] == 1:
-        st.success("✅ Student will be Placed")
     else:
-        st.error("❌ Student will NOT be Placed")
+        # Normal prediction
+        input_data = np.array([[
+            float(cgpa),
+            float(ssc),
+            float(hsc),
+            float(internships),
+            float(projects),
+            float(aptitude),
+            float(communication),
+            float(training_val)
+        ]])
+
+        result = model.predict(input_data)
+
+        if result[0] == 1:
+            st.success("✅ Student will be Placed")
+        else:
+            st.error("❌ Student will NOT be Placed")
