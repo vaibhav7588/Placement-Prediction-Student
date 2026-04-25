@@ -33,8 +33,11 @@ training_val = 1 if training == "Yes" else 0
 if st.button("Predict"):
 
     # 🚨 FAIL CONDITION (IMPORTANT)
-    if ssc < 35 or hsc < 35:
-        st.error("❌ Student will NOT be Placed (Failed in SSC/HSC)")
+    if ssc < 35:
+        st.error("❌ Student will NOT be Placed (Failed in SSC)")
+        if hsc < 35:
+        st.error("❌ Student will NOT be Placed (Failed in hsc)")
+        
     
     else:
         # Normal prediction
