@@ -6,44 +6,46 @@ import numpy as np
 with open("model.pkl", "rb") as f:
     model = pickle.load(f)
 
-st.title("🎓 Student Placement Prediction")
+st.title("🎓 Student Placement Prediction System")
 
-# 🔹 FLOAT INPUTS
-cgpa = st.number_input("CGPA", min_value=0.0, max_value=10.0, step=0.1)
+st.subheader("Enter Student Details")
 
-ssc = st.number_input("10th Percentage (SSC)", min_value=0.0, max_value=100.0, step=0.1)
+# 🔹 Inputs
+cgpa = st.number_input("CGPA", 0.0, 10.0, step=0.1)
+ssc = st.number_input("SSC Percentage", 0.0, 100.0, step=0.1)
+hsc = st.number_input("HSC Percentage", 0.0, 100.0, step=0.1)
+aptitude = st.number_input("Aptitude Score", 0.0, 100.0, step=0.1)
 
-hsc = st.number_input("12th Percentage (HSC)", min_value=0.0, max_value=100.0, step=0.1)
-
-aptitude = st.number_input("Aptitude Score", min_value=0.0, max_value=100.0, step=0.1)
-
-# 🔹 OTHER INPUTS
-internships = st.number_input("Internships", min_value=0, step=1)
-
-projects = st.number_input("Projects", min_value=0, step=1)
-
+internships = st.number_input("Internships", 0, 10)
+projects = st.number_input("Projects", 0, 10)
 communication = st.slider("Communication Skills (1-10)", 1, 10)
 
 training = st.selectbox("Placement Training", ["No", "Yes"])
-
-# Convert training
 training_val = 1 if training == "Yes" else 0
 
-# 🔹 Prediction Button
+# 🔹 Prediction
 if st.button("Predict"):
 
-    # 🚨 Separate Fail Conditions
-    if ssc < 35 and hsc < 35:
-        st.error("❌ Student failed in BOTH SSC and HSC → NOT Placed")
+    # 🚨 Eligibility Criteria
+    if ssc < 40 and hsc < 40:
+        st.error("❌ Failed in SSC & HSC → Not Eligible")
+    
+    elif ssc < 40:
+        st.error("❌ Failed in SSC → Not Eligible")
 
-    elif ssc < 35:
-        st.error("❌ Student failed in SSC → NOT Placed")
+    elif hsc < 40:
+        st.error("❌ Failed in HSC → Not Eligible")
 
-    elif hsc < 35:
-        st.error("❌ Student failed in HSC → NOT Placed")
+    elif cgpa < 6:
+        st.warning("⚠️ Low CGPA → Not Eligible")
+
+    elif aptitude < 60:
+        st.warning("⚠️ Low Aptitude → Not Eligible")
 
     else:
-        # Normal ML prediction
+        st.success("✅ Eligible for Placement Process")
+
+        # 🤖 ML Prediction
         input_data = np.array([[
             float(cgpa),
             float(ssc),
@@ -57,7 +59,13 @@ if st.button("Predict"):
 
         result = model.predict(input_data)
 
+        # 🔹 Output with Reason
         if result[0] == 1:
-            st.success("✅ Student will be Placed")
+            st.success("🎉 Prediction: Student WILL be Placed")
+
+            st.info("💡 Reason: Good academic performance + skills")
+
         else:
-            st.error("❌ Student will NOT be Placed")
+            st.error("❌ Prediction: Student will NOT be Placed")
+
+            st.info("💡 Reason: Skills or performance not sufficient")
