@@ -32,15 +32,18 @@ training_val = 1 if training == "Yes" else 0
 # 🔹 Prediction Button
 if st.button("Predict"):
 
-    # 🚨 FAIL CONDITION (IMPORTANT)
-    if ssc < 35:
-        st.error("❌ Student will NOT be Placed (Failed in SSC)")
-        if hsc < 35:
-        st.error("❌ Student will NOT be Placed (Failed in hsc)")
-        
-    
+    # 🚨 Separate Fail Conditions
+    if ssc < 35 and hsc < 35:
+        st.error("❌ Student failed in BOTH SSC and HSC → NOT Placed")
+
+    elif ssc < 35:
+        st.error("❌ Student failed in SSC → NOT Placed")
+
+    elif hsc < 35:
+        st.error("❌ Student failed in HSC → NOT Placed")
+
     else:
-        # Normal prediction
+        # Normal ML prediction
         input_data = np.array([[
             float(cgpa),
             float(ssc),
